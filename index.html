@@ -16,20 +16,37 @@
   --dark:#061a1a;
   --text:#0d2e2e;
   --white:#ffffff;
-  --pixel-size:3px;
 }
-@font-face{font-family:'pixel';src:local('Press Start 2P');}
 *{margin:0;padding:0;box-sizing:border-box;}
-html{scroll-behavior:smooth;}
-body{background:var(--cream);color:var(--text);font-family:'DM Sans',sans-serif;overflow-x:hidden;cursor:none;}
+html{scroll-behavior:smooth;overflow-x:hidden;}
 
-/* ===== PIXEL CURSOR ===== */
-#cur{position:fixed;width:14px;height:14px;background:var(--yellow);pointer-events:none;z-index:9999;transform:translate(-50%,-50%);image-rendering:pixelated;}
-#cur-ring{position:fixed;width:30px;height:30px;border:3px solid var(--teal);pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .25s,height .25s,border-color .25s;image-rendering:pixelated;}
-.cur-big #cur-ring{width:50px;height:50px;border-color:var(--yellow);}
+/* ===== THE CORE FIX — nothing bleeds past viewport width ===== */
+body{
+  background:var(--cream);
+  color:var(--text);
+  font-family:'DM Sans',sans-serif;
+  overflow-x:hidden;   /* kills horizontal scroll on body */
+  width:100%;
+  max-width:100vw;
+  cursor:none;
+  /* hide scrollbar everywhere but keep scroll working */
+  scrollbar-width:none;          /* Firefox */
+  -ms-overflow-style:none;       /* IE/Edge */
+}
+body::-webkit-scrollbar{display:none;} /* Chrome/Safari */
+
+/* every section must stay within viewport — no exceptions */
+section,#s-marquee,footer,#nav,#mob-menu{
+  width:100%;
+  max-width:100vw;
+  overflow-x:hidden;
+}
+
+/* cursor — default system cursor */
+body{cursor:auto;}
 
 /* ===== SCROLL PROGRESS ===== */
-#sprog{position:fixed;top:0;left:0;height:4px;background:var(--yellow);z-index:600;width:0%;image-rendering:pixelated;}
+#sprog{position:fixed;top:0;left:0;height:4px;background:var(--yellow);z-index:600;width:0%;}
 
 /* ===== NAV ===== */
 #nav{position:fixed;top:0;left:0;right:0;z-index:500;padding:0 48px;height:64px;display:flex;justify-content:space-between;align-items:center;background:rgba(6,82,82,0.97);border-bottom:4px solid var(--yellow);}
@@ -44,25 +61,43 @@ body{background:var(--cream);color:var(--text);font-family:'DM Sans',sans-serif;
 #mob-menu .nav-link{padding:14px 24px;border:none;border-bottom:2px solid rgba(245,230,66,0.1);font-size:8px;}
 
 /* ===== HERO ===== */
-#s-hero{min-height:100vh;background:var(--teal-dark);display:flex;flex-direction:column;padding-top:64px;position:relative;overflow:hidden;}
+#s-hero{
+  min-height:100vh;
+  background:var(--teal-dark);
+  display:flex;
+  flex-direction:column;
+  padding-top:64px;
+  position:relative;
+  overflow:hidden; /* critical — clips the photo that was causing white gap */
+}
 #s-hero::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(245,230,66,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(245,230,66,0.04) 1px,transparent 1px);background-size:32px 32px;pointer-events:none;}
-.hero-inner{flex:1;display:grid;grid-template-columns:1.1fr 0.9fr;align-items:center;padding:40px 48px 32px;gap:40px;position:relative;z-index:1;}
-.hero-left{}
+.hero-inner{
+  flex:1;
+  display:grid;
+  grid-template-columns:1.1fr 0.9fr;
+  align-items:center;
+  padding:40px 48px 32px;
+  gap:40px;
+  position:relative;
+  z-index:1;
+  width:100%;  /* never wider than parent */
+}
 .hero-pixel-tag{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--yellow);opacity:.5;letter-spacing:2px;margin-bottom:20px;display:flex;align-items:center;gap:10px;}
 .hero-pixel-tag::before{content:'▶';font-size:10px;}
 .hero-name{font-family:'Press Start 2P',monospace;line-height:1.3;color:var(--yellow);}
-.hero-name .fn{font-size:clamp(28px,5vw,58px);display:block;margin-bottom:8px;}
-.hero-name .ln{font-size:clamp(18px,3vw,36px);display:block;color:rgba(245,230,66,0.55);}
-.hero-badge{display:inline-block;margin-top:22px;padding:10px 18px;background:var(--yellow);font-family:'Press Start 2P',monospace;font-size:8px;color:var(--teal-dark);letter-spacing:1px;border:0;}
-.hero-bio{margin-top:24px;font-family:'DM Serif Display',serif;font-style:italic;font-size:clamp(16px,1.8vw,21px);color:rgba(255,255,255,0.78);line-height:1.8;max-width:480px;}
-.hero-pixel-stats{display:flex;gap:3px;margin-top:28px;}
-.px-stat{background:rgba(245,230,66,0.07);border:3px solid rgba(245,230,66,0.2);padding:14px 16px;text-align:center;min-width:90px;}
+.hero-name .fn{font-size:clamp(24px,4.5vw,58px);display:block;margin-bottom:8px;}
+.hero-name .ln{font-size:clamp(16px,2.8vw,36px);display:block;color:rgba(245,230,66,0.55);}
+.hero-badge{display:inline-block;margin-top:22px;padding:10px 18px;background:var(--yellow);font-family:'Press Start 2P',monospace;font-size:8px;color:var(--teal-dark);letter-spacing:1px;}
+.hero-bio{margin-top:24px;font-family:'DM Serif Display',serif;font-style:italic;font-size:clamp(15px,1.6vw,21px);color:rgba(255,255,255,0.78);line-height:1.8;max-width:480px;}
+.hero-pixel-stats{display:flex;gap:3px;margin-top:28px;flex-wrap:wrap;}
+.px-stat{background:rgba(245,230,66,0.07);border:3px solid rgba(245,230,66,0.2);padding:14px 16px;text-align:center;min-width:80px;}
 .px-stat strong{font-family:'Press Start 2P',monospace;font-size:14px;color:var(--yellow);display:block;line-height:1;margin-bottom:6px;}
 .px-stat span{font-family:'Press Start 2P',monospace;font-size:6px;color:rgba(245,230,66,0.35);text-transform:uppercase;line-height:1.4;}
 
+/* HERO PHOTO */
 .hero-right{display:flex;flex-direction:column;align-items:center;gap:16px;}
 .hero-photo-outer{position:relative;width:100%;max-width:360px;}
-.hero-photo-frame{position:relative;width:100%;padding:0;background:var(--teal);}
+.hero-photo-frame{position:relative;width:100%;background:var(--teal);}
 .hero-photo-frame::before{content:'';position:absolute;inset:-8px;border:4px solid var(--yellow);pointer-events:none;z-index:2;}
 .hero-photo-frame::after{content:'';position:absolute;inset:-16px;border:2px solid rgba(245,230,66,0.25);pointer-events:none;z-index:1;}
 .hero-photo-frame img{width:100%;display:block;aspect-ratio:3/4;object-fit:cover;object-position:top;filter:contrast(1.05) saturate(1.1);}
@@ -97,7 +132,7 @@ body{background:var(--cream);color:var(--text);font-family:'DM Sans',sans-serif;
 .game-arena{display:flex;flex-direction:column;align-items:flex-start;width:100%;}
 .score-bar{display:flex;justify-content:space-between;padding:10px 16px;background:rgba(245,230,66,0.08);border:3px solid var(--yellow);border-bottom:none;font-family:'Press Start 2P',monospace;font-size:9px;color:var(--yellow);width:100%;max-width:400px;}
 .canvas-wrap{position:relative;width:100%;max-width:400px;}
-#snakeCanvas{display:block;background:var(--teal-dark);width:100%;max-width:400px;height:auto;aspect-ratio:1;border:3px solid var(--yellow);}
+#snakeCanvas{display:block;background:var(--teal-dark);width:100%;height:auto;aspect-ratio:1;border:3px solid var(--yellow);}
 #gameOverlay{position:absolute;inset:0;background:rgba(6,26,26,0.96);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;border:3px solid var(--yellow);}
 #gameOverlay h2{font-family:'Press Start 2P',monospace;font-size:clamp(18px,3vw,32px);color:var(--yellow);text-align:center;}
 #gameOverlay p{font-family:'Press Start 2P',monospace;font-size:8px;color:rgba(255,255,255,0.5);letter-spacing:1px;text-align:center;padding:0 20px;line-height:1.8;}
@@ -110,7 +145,7 @@ body{background:var(--cream);color:var(--text);font-family:'DM Sans',sans-serif;
 .about-layout{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;max-width:1200px;margin:0 auto;}
 .about-eyebrow{font-family:'Press Start 2P',monospace;font-size:8px;color:rgba(245,230,66,0.5);letter-spacing:2px;margin-bottom:20px;display:flex;align-items:center;gap:8px;}
 .about-eyebrow::before{content:'▶';}
-.about-headline{font-family:'Press Start 2P',monospace;font-size:clamp(18px,2.8vw,36px);line-height:1.6;color:var(--yellow);margin-bottom:28px;}
+.about-headline{font-family:'Press Start 2P',monospace;font-size:clamp(16px,2.5vw,32px);line-height:1.6;color:var(--yellow);margin-bottom:28px;}
 .about-body{font-family:'DM Serif Display',serif;font-style:italic;font-size:clamp(15px,1.6vw,19px);color:rgba(255,255,255,0.78);line-height:1.85;}
 .about-body p+p{margin-top:18px;}
 .about-cards{display:flex;flex-direction:column;gap:12px;}
@@ -122,26 +157,35 @@ body{background:var(--cream);color:var(--text);font-family:'DM Sans',sans-serif;
 .about-card-title{font-family:'Press Start 2P',monospace;font-size:10px;color:var(--yellow);margin-bottom:10px;line-height:1.6;}
 .about-card-body{font-family:'DM Sans',sans-serif;font-size:13px;color:rgba(255,255,255,0.6);line-height:1.7;}
 
-/* ===== WORK SECTION — FIXED MEDIA SIZING ===== */
+/* ===== WORK SECTION ===== */
 #s-work{background:var(--dark);padding:90px 0 60px;}
 .work-header{padding:0 48px;margin-bottom:40px;}
 .work-eyebrow{font-family:'Press Start 2P',monospace;font-size:8px;color:rgba(245,230,66,0.5);letter-spacing:2px;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
 .work-eyebrow::before{content:'▶';}
 .work-headline{font-family:'Press Start 2P',monospace;font-size:clamp(18px,3vw,40px);line-height:1.5;color:var(--yellow);margin-bottom:8px;}
 .work-sub{font-family:'DM Serif Display',serif;font-style:italic;font-size:16px;color:rgba(255,255,255,0.45);margin-top:10px;}
-.work-scroll-outer{overflow-x:auto;overflow-y:hidden;padding:8px 48px 28px;scrollbar-width:thin;scrollbar-color:var(--yellow) rgba(245,230,66,0.05);cursor:grab;}
+
+/* horizontal scroll container — hides its own scrollbar */
+.work-scroll-outer{
+  overflow-x:auto;
+  overflow-y:hidden;
+  padding:8px 48px 28px;
+  cursor:grab;
+  /* hide scrollbar visually but keep it functional */
+  scrollbar-width:none;
+  -ms-overflow-style:none;
+}
+.work-scroll-outer::-webkit-scrollbar{display:none;}
 .work-scroll-outer:active{cursor:grabbing;}
-.work-scroll-outer::-webkit-scrollbar{height:4px;}
-.work-scroll-outer::-webkit-scrollbar-track{background:rgba(245,230,66,0.04);}
-.work-scroll-outer::-webkit-scrollbar-thumb{background:var(--yellow);}
-.work-track{display:flex;gap:24px;width:max-content;padding-bottom:4px;align-items:stretch;}
+
+.work-track{display:flex;gap:24px;width:max-content;padding-bottom:4px;align-items:flex-start;}
 .work-card{flex-shrink:0;width:380px;background:rgba(245,230,66,0.03);border:3px solid rgba(245,230,66,0.12);overflow:hidden;transition:all .25s;position:relative;display:flex;flex-direction:column;}
 .work-card:hover{border-color:var(--yellow);transform:translateY(-5px);}
-/* Media box: NEVER crops. It centers the real image/video and lets it keep its own ratio (1:1 IG post, 9:16 reel, whatever it actually is). The box grows or shrinks to fit — nothing gets cut off. */
+
+/* media — fully flexible, respects real ratio, never crops */
 .work-card-media{
   width:100%;
   position:relative;
-  overflow:hidden;
   background:var(--teal-dark);
   background-image:linear-gradient(rgba(245,230,66,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(245,230,66,0.05) 1px,transparent 1px);
   background-size:14px 14px;
@@ -156,25 +200,25 @@ body{background:var(--cream);color:var(--text);font-family:'DM Sans',sans-serif;
   width:auto;
   height:auto;
   max-width:100%;
-  max-height:640px;
   object-fit:contain;
 }
-/* Square posts (1:1) and reels (9:16) get their own class so the card frames them cleanly instead of guessing */
-.work-card-media.ratio-square img,.work-card-media.ratio-square video{aspect-ratio:1/1;width:100%;height:auto;}
-.work-card-media.ratio-reel img,.work-card-media.ratio-reel video{aspect-ratio:9/16;height:600px;width:auto;max-height:600px;}
-.work-card-media.ratio-portrait img,.work-card-media.ratio-portrait video{aspect-ratio:4/5;width:100%;height:auto;}
-.work-card-media.ratio-wide img,.work-card-media.ratio-wide video{aspect-ratio:16/9;width:100%;height:auto;}
-.work-card-media .media-ph{width:100%;min-height:340px;display:flex;align-items:center;justify-content:center;font-size:64px;}
+/* ratio helpers — apply these to .work-card-media */
+.work-card-media.ratio-square img,.work-card-media.ratio-square video{width:100%;height:auto;aspect-ratio:1/1;}
+.work-card-media.ratio-reel img,.work-card-media.ratio-reel video{height:560px;width:auto;max-width:100%;aspect-ratio:9/16;}
+.work-card-media.ratio-portrait img,.work-card-media.ratio-portrait video{width:100%;height:auto;aspect-ratio:4/5;}
+.work-card-media.ratio-wide img,.work-card-media.ratio-wide video{width:100%;height:auto;aspect-ratio:16/9;}
+.work-card-media .media-ph{width:100%;min-height:320px;display:flex;align-items:center;justify-content:center;font-size:64px;}
+
 .work-card-type-badge{position:absolute;top:14px;left:14px;background:var(--yellow);font-family:'Press Start 2P',monospace;font-size:7px;letter-spacing:1px;text-transform:uppercase;padding:6px 12px;color:var(--teal-dark);z-index:2;}
 .work-play-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(6,26,26,0.25);opacity:0;transition:opacity .25s;cursor:pointer;z-index:3;}
-.work-card-media:hover .work-play-overlay{opacity:1;}
+/* only show play button on hover when video card */
+.work-card-media:has(video):hover .work-play-overlay{opacity:1;}
 .play-circle{width:60px;height:60px;background:var(--yellow);display:flex;align-items:center;justify-content:center;}
 .play-circle svg{width:20px;height:20px;fill:var(--teal-dark);margin-left:4px;}
 .work-card-body{padding:22px 26px 26px;flex:1;display:flex;flex-direction:column;}
 .work-card-title{font-family:'Press Start 2P',monospace;font-size:11px;color:var(--yellow);margin-bottom:10px;line-height:1.6;}
 .work-card-sub{font-family:'Press Start 2P',monospace;font-size:7px;color:rgba(245,230,66,0.35);letter-spacing:1px;margin-bottom:14px;display:block;line-height:1.6;}
 .work-card-desc{font-family:'DM Sans',sans-serif;font-size:14px;color:rgba(255,255,255,0.6);line-height:1.75;}
-.work-result{margin-top:auto;padding-top:14px;font-family:'Press Start 2P',monospace;font-size:8px;color:var(--yellow);letter-spacing:1px;line-height:1.8;}
 .work-drag-hint{padding:0 48px;margin-top:12px;font-family:'Press Start 2P',monospace;font-size:7px;color:rgba(245,230,66,0.22);letter-spacing:2px;display:flex;align-items:center;gap:10px;}
 .drag-arrow{animation:nudge 1.5s ease infinite;}
 @keyframes nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(8px)}}
@@ -191,7 +235,7 @@ body{background:var(--cream);color:var(--text);font-family:'DM Sans',sans-serif;
 .sk-head{display:flex;justify-content:space-between;margin-bottom:10px;}
 .sk-name{font-family:'Press Start 2P',monospace;font-size:9px;color:var(--teal-dark);line-height:1.4;}
 .sk-pct{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--teal-dark);opacity:.4;}
-.sk-track{height:12px;background:rgba(11,123,123,0.12);position:relative;}
+.sk-track{height:12px;background:rgba(11,123,123,0.12);}
 .sk-fill{height:100%;width:0;transition:width 1.4s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden;}
 .sk-fill::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,var(--teal-dark) 0px,var(--teal-dark) 10px,transparent 10px,transparent 13px);}
 
@@ -250,39 +294,93 @@ footer{background:var(--dark);padding:20px 48px;display:flex;justify-content:spa
 
 /* ===== MOBILE ===== */
 @media(max-width:900px){
-  section{padding-left:20px!important;padding-right:20px!important;}
+  /* ALL sections get 20px sides on mobile — no exceptions */
+  section,
+  #s-hero,#s-game,#s-about,#s-work,#s-skills,#s-phil,#s-contact{
+    padding-left:20px !important;
+    padding-right:20px !important;
+    width:100% !important;
+    max-width:100vw !important;
+    overflow-x:hidden !important;
+  }
+  /* work section overrides — header and drag hint need padding too */
+  #s-work{padding-left:0 !important;padding-right:0 !important;}
+  .work-header{padding:0 20px !important;}
+  .work-drag-hint{padding:0 20px !important;}
+  .work-scroll-outer{padding:8px 20px 24px !important;}
   #nav{padding:0 20px;}
   .nav-links{display:none;}
   .nav-ham{display:flex;}
-  .hero-inner{grid-template-columns:1fr;padding:28px 20px 32px;gap:36px;}
+
+  /* hero stacks vertically */
+  .hero-inner{
+    grid-template-columns:1fr;
+    padding:28px 20px 80px;
+    gap:36px;
+  }
   .hero-right{align-items:center;}
-  .hero-photo-outer{max-width:280px;}
+  /* constrain photo so it never bleeds */
+  .hero-photo-outer{
+    max-width:min(280px, calc(100vw - 56px));
+    margin:0 auto;
+  }
+  /* sticker can overflow upward but not sideways */
+  .hero-sticker{right:-10px;top:-14px;width:70px;height:70px;}
   .hero-pixel-stats{flex-wrap:wrap;gap:6px;}
-  .game-layout{grid-template-columns:1fr;gap:36px;}
-  .about-layout{grid-template-columns:1fr;gap:36px;}
-  .skills-layout{grid-template-columns:1fr;gap:36px;}
-  .contact-layout{grid-template-columns:1fr;gap:36px;}
-  .phil-cards{grid-template-columns:1fr;gap:6px;}
+  .hero-scroll-hint{left:20px;font-size:6px;}
+
+  /* game, about, skills, contact — force single column */
+  .game-layout,
+  .about-layout,
+  .skills-layout,
+  .contact-layout{
+    grid-template-columns:1fr !important;
+    gap:36px;
+    width:100%;
+  }
+  .phil-cards{grid-template-columns:1fr !important;gap:6px;}
+
+  /* game arena and canvas full width */
+  .game-arena{width:100%;align-items:stretch;}
+  .score-bar,.canvas-wrap,#snakeCanvas,.game-hint{
+    width:100% !important;
+    max-width:100% !important;
+  }
+
+  /* contact cards full width */
+  .contact-cards,.manifesto-box,.cc{width:100% !important;}
+  .cc-val{font-size:16px;word-break:break-all;}
+
+  /* about cards full width */
+  .about-cards{width:100%;}
+
+  /* skill bars full width */
+  .skill-bars{width:100%;}
+
+  /* work cards */
   .work-scroll-outer{padding:8px 20px 24px;}
   .work-header{padding:0 20px;}
   .work-drag-hint{padding:0 20px;}
-  .work-card{width:86vw;}
-  .work-card-media.ratio-reel img,.work-card-media.ratio-reel video{height:70vh;max-height:520px;}
+  /* card width fits mobile — leaves a peek of next card */
+  .work-card{width:calc(100vw - 56px);}
+  /* reels on mobile fill height better */
+  .work-card-media.ratio-reel img,
+  .work-card-media.ratio-reel video{height:min(560px,75vh);width:auto;max-width:100%;}
+
   footer{padding:16px 20px;flex-direction:column;gap:8px;text-align:center;}
-  .hero-scroll-hint{left:20px;}
 }
+
 @media(max-width:600px){
   .hero-name .fn{font-size:clamp(20px,8vw,36px);}
   .hero-name .ln{font-size:clamp(14px,5vw,22px);}
-  .game-title{font-size:clamp(16px,5vw,28px);}
-  .work-card{width:90vw;}
+  .game-title{font-size:clamp(16px,5vw,24px);}
+  .work-card{width:calc(100vw - 40px);}
+  .hero-badge{font-size:6px;padding:8px 12px;}
 }
 </style>
 </head>
 <body>
 
-<div id="cur"></div>
-<div id="cur-ring"></div>
 <div id="sprog"></div>
 
 <!-- NAV -->
@@ -329,8 +427,7 @@ footer{background:var(--dark);padding:20px 48px;display:flex;justify-content:spa
     <div class="hero-right reveal-r">
       <div class="hero-photo-outer">
         <div class="hero-photo-frame">
-          <!-- ADD YOUR PHOTO: replace the div below with <img src="your-photo.jpg" alt="Shubham Chandiwade"> -->
-          <div class="hero-photo-placeholder"><img src="images/forHero.jpeg" alt="Shubham Chandiwade"></div>
+          <img src="images/forHero.jpeg" alt="Shubham Chandiwade">
           <div class="px-corner tl"></div>
           <div class="px-corner tr"></div>
           <div class="px-corner bl"></div>
@@ -429,19 +526,15 @@ footer{background:var(--dark);padding:20px 48px;display:flex;justify-content:spa
   <div class="work-header">
     <div class="work-eyebrow reveal">Selected Work</div>
     <div class="work-headline reveal">CAMPAIGNS<br>& CREATIVES.</div>
-    <p class="work-sub reveal">Drag → to explore · Swipe on mobile. Every frame below keeps its real ratio — reels stay tall, posts stay square, nothing gets cropped.</p>
+    <p class="work-sub reveal">Drag → to explore · Swipe on mobile</p>
   </div>
   <div class="work-scroll-outer" id="workScroll">
     <div class="work-track">
 
-
-
-         <div class="work-card reveal d2">
+      <div class="work-card reveal">
         <div class="work-card-media ratio-reel">
-          <!-- ADD YOUR REEL: <video src="reel.mp4" muted loop autoplay playsinline></video> -->
-          <div class="media-ph"><video src="images/Ayatti reel.mp4" muted loop autoplay playsinline></video></div>
-          <span class="work-card-type-badge"></span>
-          <div class="work-play-overlay"><div class="play-circle"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+          <video src="images/Ayatti reel.mp4" muted loop autoplay playsinline></video>
+          <span class="work-card-type-badge">Reel</span>
         </div>
         <div class="work-card-body">
           <div class="work-card-title">Ayatti Wellness</div>
@@ -449,106 +542,82 @@ footer{background:var(--dark);padding:20px 48px;display:flex;justify-content:spa
         </div>
       </div>
 
-
-
-           <div class="work-card reveal d3">
+      <div class="work-card reveal d1">
         <div class="work-card-media ratio-portrait">
-          <!-- ADD YOUR IMAGE: <img src="photo.jpg"> -->
-          <div class="media-ph"><img src="images/ananya.jpg" alt="Photo"></div>
-          <span class="work-card-type-badge"></span>
+          <img src="images/ananya.jpg" alt="Ananya Living">
+          <span class="work-card-type-badge">Campaign</span>
+          <!-- no play overlay — image card -->
         </div>
         <div class="work-card-body">
           <div class="work-card-title">Ananya Living</div>
-          
           <p class="work-card-desc">Developed a product-focused campaign showcasing craftsmanship, materials, and design features. Combined clean layouts with informative visuals to communicate product value while maintaining a premium brand identity.</p>
         </div>
       </div>
 
-      <div class="work-card reveal d3">
+      <div class="work-card reveal d2">
         <div class="work-card-media ratio-portrait">
-          <!-- ADD YOUR IMAGE: <img src="photo.jpg"> -->
-          <div class="media-ph"><img src="images/ananya1212.jpg.png" alt="Photo"></div>
-          <span class="work-card-type-badge"></span>
+          <img src="images/ananya1212.jpg.png" alt="Ananya Living">
+          <span class="work-card-type-badge">Campaign</span>
         </div>
         <div class="work-card-body">
           <div class="work-card-title">Ananya Living</div>
-         
           <p class="work-card-desc">Created a lifestyle campaign emphasizing texture, quality, and aesthetics. Used minimalist compositions and natural color palettes to strengthen brand perception and improve product presentation.</p>
         </div>
       </div>
 
-      <div class="work-card reveal d2">
+      <div class="work-card reveal d3">
         <div class="work-card-media ratio-reel">
-          <!-- ADD YOUR REEL: <video src="reel.mp4" muted loop autoplay playsinline></video> -->
-          <div class="media-ph"><video src="images/Aarog Wellness reel.mp4" muted loop autoplay playsinline></video></div>
-          <span class="work-card-type-badge"></span>
+          <video src="images/Aarog Wellness reel.mp4" muted loop autoplay playsinline></video>
+          <span class="work-card-type-badge">Reel</span>
           <div class="work-play-overlay"><div class="play-circle"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
         </div>
         <div class="work-card-body">
           <div class="work-card-title">Aarog Wellness</div>
-      
           <p class="work-card-desc">Designed engaging social media posts for a wellness brand, highlighting massage therapies and spa services through premium visuals and clean, informative layouts.</p>
         </div>
       </div>
 
-        <div class="work-card reveal d2">
+      <div class="work-card reveal d3">
         <div class="work-card-media ratio-reel">
-          <!-- ADD YOUR REEL: <video src="reel.mp4" muted loop autoplay playsinline></video> -->
-          <div class="media-ph"><video src="images/Elysium Spa Video.mp4" muted loop autoplay playsinline></video></div>
-          <span class="work-card-type-badge"></span>
+          <video src="images/Elysium Spa Video.mp4" muted loop autoplay playsinline></video>
+          <span class="work-card-type-badge">Reel</span>
           <div class="work-play-overlay"><div class="play-circle"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
         </div>
         <div class="work-card-body">
           <div class="work-card-title">Elysium Spa</div>
-
           <p class="work-card-desc">Created aesthetically driven social media creatives focused on relaxation, rejuvenation, and luxury spa experiences, using minimalist design and compelling visual storytelling.</p>
         </div>
       </div>
-    
 
-              <div class="work-card reveal d3">
+      <div class="work-card reveal d3">
         <div class="work-card-media ratio-portrait">
-          <!-- ADD YOUR IMAGE: <img src="photo.jpg"> -->
-          <div class="media-ph"><img src="images/posh paw image.png" alt="Photo"></div>
-          <span class="work-card-type-badge"></span>
+          <img src="images/posh paw image.png" alt="The Posh Paw">
+          <span class="work-card-type-badge">Campaign</span>
         </div>
         <div class="work-card-body">
           <div class="work-card-title">The Posh Paw</div>
-   
           <p class="work-card-desc">Designed a fashion-inspired promotional campaign for a luxury pet boutique. Blended editorial-style visuals with premium branding to create eye-catching content for social media marketing.</p>
         </div>
       </div>
 
-
-      
-
-
-      <!-- CARD 4 — Photo placeholder (portrait 4:5) -->
       <div class="work-card reveal d3">
         <div class="work-card-media ratio-portrait">
-          <!-- ADD YOUR IMAGE: <img src="photo.jpg"> -->
-          <div class="media-ph"><img src="images/avonfcc.png" alt="Photo"></div>
-          <span class="work-card-type-badge"></span>
+          <img src="images/avonfcc.png" alt="Avon FC Campaign">
+          <span class="work-card-type-badge">Campaign</span>
         </div>
         <div class="work-card-body">
-          <div class="work-card-title">Avon Fc Campaign</div>
-      
-          <p class="work-card-desc">Designed and executed a FIFA World Cup-inspired marketing campaign to showcase Avon Flavours' flavour range. Leveraged football-themed visuals and creative storytelling to present each flavour in an engaging, memorable way while strengthening brand identity and audience engagement.</p>
+          <div class="work-card-title">Avon FC Campaign</div>
+          <p class="work-card-desc">Designed and executed a FIFA World Cup-inspired marketing campaign to showcase Avon Flavours' flavour range. Leveraged football-themed visuals and creative storytelling to present each flavour in an engaging, memorable way.</p>
         </div>
       </div>
 
-
-     
-
-         <div class="work-card reveal d3">
+      <div class="work-card reveal d3">
         <div class="work-card-media ratio-portrait">
-          <!-- ADD YOUR IMAGE: <img src="photo.jpg"> -->
-          <div class="media-ph"><img src="images/faceoffc.png" alt="Photo"></div>
-          <span class="work-card-type-badge"></span>
+          <img src="images/faceoffc.png" alt="Face Off Campaign">
+          <span class="work-card-type-badge">Campaign</span>
         </div>
         <div class="work-card-body">
           <div class="work-card-title">Face Off Campaign</div>
-   
           <p class="work-card-desc">Developed an interactive tournament-style campaign featuring multiple seasoning variants. Used gamification and competitive visuals to increase engagement while making product discovery more fun and memorable.</p>
         </div>
       </div>
@@ -556,6 +625,7 @@ footer{background:var(--dark);padding:20px 48px;display:flex;justify-content:spa
     </div>
   </div>
   <div class="work-drag-hint reveal">
+    <span class="drag-arrow">▶</span>
     DRAG TO SEE MORE WORK
   </div>
 </section>
@@ -587,7 +657,7 @@ footer{background:var(--dark);padding:20px 48px;display:flex;justify-content:spa
       <div class="phil-card reveal">
         <span class="phil-icon">🎯</span>
         <div class="phil-title">STRATEGY FIRST</div>
-        <p class="phil-body">Before any creative decision, I ask why. A campaign without a clear why is just noise — and I've never been interested in making noise.</p>
+        <p class="phil-body">Before any creative decision, I ask why. A campaign without a clear why is just noise.</p>
       </div>
       <div class="phil-card reveal d1">
         <span class="phil-icon">🤝</span>
@@ -650,15 +720,7 @@ footer{background:var(--dark);padding:20px 48px;display:flex;justify-content:spa
 </footer>
 
 <script>
-/* ===== CURSOR ===== */
-const cur=document.getElementById('cur'),ring=document.getElementById('cur-ring');
-let mx=0,my=0,rx=0,ry=0;
-document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
-(function animRing(){rx+=(mx-rx)*.1;ry+=(my-ry)*.1;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animRing);})();
-document.querySelectorAll('a,button,.work-card,.about-card,.phil-card,.cc').forEach(el=>{
-  el.addEventListener('mouseenter',()=>document.body.classList.add('cur-big'));
-  el.addEventListener('mouseleave',()=>document.body.classList.remove('cur-big'));
-});
+
 
 /* ===== SCROLL PROGRESS + NAV ===== */
 const navLinks=document.querySelectorAll('#navlinks .nav-link');
@@ -702,15 +764,20 @@ const sbObs=new IntersectionObserver(entries=>{
 const sbEl=document.getElementById('skill-bars');
 if(sbEl)sbObs.observe(sbEl);
 
-/* ===== WORK DRAG SCROLL ===== */
+/* ===== WORK DRAG SCROLL (mouse) ===== */
 const ws=document.getElementById('workScroll');
 let isDn=false,sX,sL;
 ws.addEventListener('mousedown',e=>{isDn=true;sX=e.pageX-ws.offsetLeft;sL=ws.scrollLeft;});
 document.addEventListener('mouseup',()=>isDn=false);
 ws.addEventListener('mousemove',e=>{if(!isDn)return;e.preventDefault();ws.scrollLeft=sL-(e.pageX-ws.offsetLeft-sX)*1.3;});
+/* touch swipe for work cards */
 let wtx=0;
 ws.addEventListener('touchstart',e=>{wtx=e.touches[0].clientX;},{passive:true});
-ws.addEventListener('touchmove',e=>{ws.scrollLeft+=wtx-e.touches[0].clientX;wtx=e.touches[0].clientX;},{passive:true});
+ws.addEventListener('touchmove',e=>{
+  const dx=wtx-e.touches[0].clientX;
+  ws.scrollLeft+=dx;
+  wtx=e.touches[0].clientX;
+},{passive:true});
 
 /* ===== SNAKE GAME ===== */
 const canvas=document.getElementById('snakeCanvas');
@@ -745,10 +812,19 @@ function step(){
 function endGame(){gameRunning=false;clearInterval(animId);document.getElementById('overlayTitle').textContent='GAME OVER';document.getElementById('overlayMsg').textContent='SCORE: '+score+' · NOT BAD.';document.getElementById('restartBtn').textContent='▶ TRY AGAIN';document.getElementById('gameOverlay').style.display='flex';}
 function startGame(){document.getElementById('gameOverlay').style.display='none';initGame();gameRunning=true;clearInterval(animId);animId=setInterval(step,115);}
 document.getElementById('restartBtn').addEventListener('click',startGame);
-document.addEventListener('keydown',e=>{const mv={'ArrowUp':{x:0,y:-1},'ArrowDown':{x:0,y:1},'ArrowLeft':{x:-1,y:0},'ArrowRight':{x:1,y:0}};if(mv[e.key]&&gameRunning){e.preventDefault();const m=mv[e.key];if(m.x!==-dir.x||m.y!==-dir.y)nextDir=m;}});
+document.addEventListener('keydown',e=>{
+  const mv={'ArrowUp':{x:0,y:-1},'ArrowDown':{x:0,y:1},'ArrowLeft':{x:-1,y:0},'ArrowRight':{x:1,y:0}};
+  if(mv[e.key]&&gameRunning){e.preventDefault();const m=mv[e.key];if(m.x!==-dir.x||m.y!==-dir.y)nextDir=m;}
+});
 let gx=0,gy=0;
 canvas.addEventListener('touchstart',e=>{gx=e.touches[0].clientX;gy=e.touches[0].clientY;e.preventDefault();},{passive:false});
-canvas.addEventListener('touchend',e=>{if(!gameRunning){startGame();return;}const dx=e.changedTouches[0].clientX-gx,dy=e.changedTouches[0].clientY-gy;if(Math.abs(dx)>Math.abs(dy)){if(dx>20&&dir.x!==-1)nextDir={x:1,y:0};else if(dx<-20&&dir.x!==1)nextDir={x:-1,y:0};}else{if(dy>20&&dir.y!==-1)nextDir={x:0,y:1};else if(dy<-20&&dir.y!==1)nextDir={x:0,y:-1};}e.preventDefault();},{passive:false});
+canvas.addEventListener('touchend',e=>{
+  if(!gameRunning){startGame();return;}
+  const dx=e.changedTouches[0].clientX-gx,dy=e.changedTouches[0].clientY-gy;
+  if(Math.abs(dx)>Math.abs(dy)){if(dx>20&&dir.x!==-1)nextDir={x:1,y:0};else if(dx<-20&&dir.x!==1)nextDir={x:-1,y:0};}
+  else{if(dy>20&&dir.y!==-1)nextDir={x:0,y:1};else if(dy<-20&&dir.y!==1)nextDir={x:0,y:-1};}
+  e.preventDefault();
+},{passive:false});
 initGame();drawGame();
 </script>
 </body>
